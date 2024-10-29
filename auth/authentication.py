@@ -4,6 +4,7 @@ from config_parser.config import Config
 from logger.web_logger import log
 
 config = Config('cfg/client_config.ini')
+
 AUTHZ_SERVER_URL = config.get('Server', 'AUTHZ_SERVER_URL')
 USERNAME = config.get('Credentials', 'USERNAME')
 PASSWORD = config.get('Credentials', 'PASSWORD')
