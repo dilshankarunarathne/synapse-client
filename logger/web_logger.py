@@ -1,9 +1,9 @@
 import requests
 import json
 import os
-from config_parser.config import Config
 
-config = Config('cfg/client_config.cfg')
+from client import config
+
 LOG_SERVER_URL = config.get('Logging', 'LOG_SERVER_URL')
 
 DATA_FILE = 'client_data.json'
