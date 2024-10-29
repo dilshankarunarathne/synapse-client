@@ -5,7 +5,8 @@ config = Config('cfg/client_config.cfg')
 LOG_SERVER_URL = config.get('Logging', 'LOG_SERVER_URL')
 
 
-def log(message):
+def log(message):  # TODO add client id to log message
+    print(message)
     message = "[Client-Core] " + message
     try:
         response = requests.post(LOG_SERVER_URL, json={'message': message},
