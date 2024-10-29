@@ -2,6 +2,7 @@ import threading
 import time
 import websocket
 from config_parser.config import Config
+from logger.web_logger import log
 
 config = Config('cfg/client_config.ini')
 WS_SERVER_URL = config.get('Server', 'SERVER_URL')
@@ -24,10 +25,12 @@ def on_error(ws, error):
 
 def on_close(ws, close_status_code, close_msg):
     print("Connection closed")
+    log(f"Connection closed: {close_status_code} {close_msg}")
 
 
 def on_open(ws):
     print("Connection established")
+    log("Connection established")  # TODO add client id to log message
 
 
 def process_job(job_id):
