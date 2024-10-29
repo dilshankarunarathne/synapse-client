@@ -41,8 +41,3 @@ def acquire_token():
     except requests.exceptions.RequestException as error:
         log(f"Error acquiring token: {error}")
         raise
-
-
-# Register client and acquire token
-client_id = register_client()
-token = acquire_token()
