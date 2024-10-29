@@ -91,7 +91,8 @@ if __name__ == "__main__":
     parser.add_argument('-p', '--password', type=str, required=True, help='Password for authentication')
     parser.add_argument('-bin', '--payload_path', type=str, help='Path for the payload file')
     parser.add_argument('-data', '--data_file_path', type=str, help='Path for the data file')
-    parser.add_argument('-mode', type=str, choices=['s', 'd', 'c'], help='Job type: s-single, d-distributive, c-collaborative')
+    parser.add_argument('-mode', type=str, choices=['s', 'd', 'c'], help='Job type: s-single, d-distributive, '
+                                                                         'c-collaborative')
 
     args = parser.parse_args()
 
@@ -125,4 +126,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         ws.close()
         log("Client terminated")
-        
