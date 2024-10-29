@@ -8,6 +8,7 @@ AUTHZ_SERVER_URL = config.get('Server', 'AUTHZ_SERVER_URL')
 USERNAME = config.get('Credentials', 'USERNAME')
 PASSWORD = config.get('Credentials', 'PASSWORD')
 
+
 def register_client():
     url = f"{AUTHZ_SERVER_URL}/register"
     data = {
@@ -24,6 +25,7 @@ def register_client():
         log(f"Error registering client: {error}")
         raise
 
+
 def acquire_token():
     url = f"{AUTHZ_SERVER_URL}/aqquire-token"
     data = {
@@ -39,6 +41,7 @@ def acquire_token():
     except requests.exceptions.RequestException as error:
         log(f"Error acquiring token: {error}")
         raise
+
 
 # Register client and acquire token
 client_id = register_client()
