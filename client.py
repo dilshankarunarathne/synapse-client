@@ -1,3 +1,4 @@
+import hashlib
 import threading
 import time
 import websocket
@@ -5,6 +6,7 @@ import websocket
 from auth.authentication import register_client, acquire_token
 from config_parser.config import Config
 from logger.web_logger import log
+from security.hashing import calculate_hash
 
 config = Config('cfg/client_config.ini')
 WS_SERVER_URL = config.get('Server', 'SERVER_URL')
@@ -18,8 +20,10 @@ def on_message(ws, message):
     if message.startswith("New job assigned: "):
         job_id = message.split(": ")[1]
         print(f"Processing job: {job_id}")
-        result = process_job(job_id)
-        ws.send(f"Job result: {job_id}: {result}")
+        # Add your job processing logic here
+        result, payload_hash, data_hash = process_job(job_id)
+        # Send the result back to the server
+        ws.send(f"Job result: {job_id}: {result}: {payload_hash}: {data_hash}")
     else:
         print("Received non-job message")
 
@@ -39,11 +43,14 @@ def on_open(ws):
 
 
 def process_job(job_id):
+    # Simulate job processing
     print(f"Job {job_id} is being processed...")
-    time.sleep(5)
+    time.sleep(5)  # Simulate a delay for job processing
     result = f"Result of job {job_id}"
+    payload_hash = calculate_hash(b"payload data")
+    data_hash = calculate_hash(b"data")
     print(f"Job {job_id} completed with result: {result}")
-    return result
+    return result, payload_hash, data_hash
 
 
 if __name__ == "__main__":
@@ -54,6 +61,7 @@ if __name__ == "__main__":
                                 on_error=on_error,
                                 on_close=on_close)
 
+    # Run WebSocket in a separate thread
     wst = threading.Thread(target=ws.run_forever)
     wst.daemon = True
     wst.start()
