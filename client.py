@@ -1,11 +1,16 @@
 import threading
 import time
 import websocket
+
+from auth.authentication import register_client, acquire_token
 from config_parser.config import Config
 from logger.web_logger import log
 
 config = Config('cfg/client_config.ini')
 WS_SERVER_URL = config.get('Server', 'SERVER_URL')
+
+client_id = register_client()
+token = acquire_token()
 
 
 def on_message(ws, message):
