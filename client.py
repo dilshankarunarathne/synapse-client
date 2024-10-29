@@ -1,10 +1,11 @@
-import websocket
 import threading
 import time
-import json
+
+import websocket
 
 # WebSocket server URL
 WS_SERVER_URL = "ws://localhost:8080/ws"
+
 
 def on_message(ws, message):
     print(f"Received message: {message}")
@@ -13,24 +14,33 @@ def on_message(ws, message):
         job_id = message.split(": ")[1]
         print(f"Processing job: {job_id}")
         # Add your job processing logic here
-        process_job(job_id)
+        result = process_job(job_id)
+        # Send the result back to the server
+        ws.send(f"Job result: {job_id}: {result}")
     else:
         print("Received non-job message")
+
 
 def on_error(ws, error):
     print(f"Error: {error}")
 
+
 def on_close(ws, close_status_code, close_msg):
     print("Connection closed")
 
+
 def on_open(ws):
     print("Connection established")
+
 
 def process_job(job_id):
     # Simulate job processing
     print(f"Job {job_id} is being processed...")
     time.sleep(5)  # Simulate a delay for job processing
-    print(f"Job {job_id} completed")
+    result = f"Result of job {job_id}"
+    print(f"Job {job_id} completed with result: {result}")
+    return result
+
 
 if __name__ == "__main__":
     websocket.enableTrace(True)
