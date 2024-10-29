@@ -1,6 +1,8 @@
 import requests
+from config_parser.config import Config
 
-LOG_SERVER_URL = 'http://localhost:3000/log'
+config = Config('cfg/client_config.cfg')
+LOG_SERVER_URL = config.get('Logging', 'LOG_SERVER_URL')
 
 
 def log(message):
