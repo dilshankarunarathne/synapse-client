@@ -1,7 +1,5 @@
-import threading
-import time
 import requests
-import websocket
+
 from config_parser.config import Config
 from logger.web_logger import log
 
