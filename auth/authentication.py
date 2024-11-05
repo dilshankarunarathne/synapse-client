@@ -1,7 +1,5 @@
 import requests
-
 from config_parser.config import Config
-from logger.web_logger import log
 
 config = Config('cfg/client_config.ini')
 
@@ -11,6 +9,7 @@ PASSWORD = config.get('Credentials', 'PASSWORD')
 
 
 def register_client():
+    from logger.web_logger import log
     url = f"{AUTHZ_SERVER_URL}/register"
     data = {
         "username": USERNAME,
@@ -28,6 +27,7 @@ def register_client():
 
 
 def acquire_token():
+    from logger.web_logger import log
     url = f"{AUTHZ_SERVER_URL}/aqquire-token"
     data = {
         "username": USERNAME,
