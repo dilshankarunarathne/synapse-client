@@ -67,6 +67,8 @@ def generate_out_code(code):
 
     # do operations
     for operation in operations:
+        # remove the starting dot
+        operation = operation[1:]
         outcode = outcode + indent + operation
 
     # print the final code
