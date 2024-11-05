@@ -6,9 +6,9 @@ import time
 import websocket
 import base64
 
+from compiler.main import run_job
 from config_parser.config import Config
 from logger.web_logger import log
-from security.hashing import calculate_hash
 from auth.authentication import register_client, acquire_token
 
 config = Config('cfg/client_config.ini')
@@ -71,7 +71,7 @@ def create_job(payload_path, data_file_path):
         log(f"Error: {error}")
 
     def c_on_close(ws, close_status_code, close_msg):
-        log(f"Connection closed: {close_status_code} {close_msg}")
+        log(f"Connection closed")
 
     def c_on_open(ws):
         log("Connection established")
@@ -98,36 +98,48 @@ def create_job(payload_path, data_file_path):
 
 
 def on_message(ws, message):
-    log(f"Received message: {message}")
-    if message.startswith("New job assigned: "):
-        job_id = message.split(": ")[1]
-        log(f"Processing job: {job_id}")
-        result, payload_hash, data_hash = process_job(job_id)
-        ws.send(f"Job result: {job_id}: {result}: {payload_hash}: {data_hash}")
+    log(f"Received message")
+    if message.startswith("JOB:"):
+        parts = message.split("|SEP|")
+        job_data = {}
+        for part in parts:
+            if ":" in part:
+                key, value = part.split(":", 1)
+                job_data[key.strip()] = value.strip()
+
+        job_id = job_data.get("JOB")
+        creator = job_data.get("CREATOR")
+        leader = job_data.get("LEADER")
+        data = job_data.get("DATA")
+        payload = job_data.get("PAYLOAD")
+
+        log(f"Processing job: {job_id} from creator: {creator}")
+        result = _process_job(job_id, data, payload)
+        # TODO hash result, payload and data
+        ws.send(f"RESULT:{job_id}:{result}")
     else:
         log(f"Received non-job message: {message}")
 
 
+def _process_job(job_id, data, payload):
+    log(f"Job {job_id} is being processed")
+
+    result = run_job(payload, data)
+
+    log(f"Job {job_id} completed")
+    return result
+
+
 def on_error(ws, error):
-    log(f"Error: {error}")
+    log(f"Error WS: {error}")
 
 
 def on_close(ws, close_status_code, close_msg):
-    log(f"Connection closed: {close_status_code} {close_msg}")
+    log(f"Connection closed")
 
 
 def on_open(ws):
     log("Connection established")
-
-
-def process_job(job_id):
-    log(f"Job {job_id} is being processed...")
-    time.sleep(5)
-    result = f"Result of job {job_id}"
-    payload_hash = calculate_hash(b"payload data")
-    data_hash = calculate_hash(b"data")
-    log(f"Job {job_id} completed with result: {result}")
-    return result, payload_hash, data_hash
 
 
 def start_service():
