@@ -1,7 +1,4 @@
 import re
-import os
-from lang.io.f_raw import read_input_data
-from lang.lib.math_col import sum_list
 
 
 def parse_synapse_code(file_path):
