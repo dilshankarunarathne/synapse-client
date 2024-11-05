@@ -5,7 +5,6 @@ import threading
 import time
 import websocket
 
-from auth.authentication import register_client, acquire_token
 from config_parser.config import Config
 from logger.web_logger import log
 from security.hashing import calculate_hash
@@ -29,11 +28,12 @@ def load_client_data():
 
 
 def authenticate(username, password):
+    from auth.authentication import register_client, acquire_token
     client_data = load_client_data()
     if client_data:
         return client_data['client_id'], client_data['token']
-    client_id = register_client(username, password)
-    token = acquire_token(username, password)
+    client_id = register_client()
+    token = acquire_token()
     save_client_data(client_id, token)
     return client_id, token
 
@@ -46,7 +46,7 @@ def create_job(payload_path, data_file_path, mode):
     payload_hash = calculate_hash(payload)
     data_hash = calculate_hash(data)
     log(f"Job created with mode: {mode}, payload hash: {payload_hash}, data hash: {data_hash}")
-    # Submit job to the distribution server (implementation needed)
+    # TODO Submit job to the distribution server (implementation needed)
 
 
 def on_message(ws, message):
@@ -100,7 +100,8 @@ if __name__ == "__main__":
         client_id, token = authenticate(args.username, args.password)
         log(f"Authenticated with client_id: {client_id} and token: {token}")
     elif args.register:
-        client_id = register_client(args.username, args.password)
+        from auth.authentication import register_client
+        client_id = register_client(args.username, args.password) # TODO: Fix this
         log(f"Registered with client_id: {client_id}")
     elif args.create:
         if not args.payload_path or not args.data_file_path or not args.mode:
