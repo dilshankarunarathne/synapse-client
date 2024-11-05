@@ -8,6 +8,7 @@ import websocket
 from config_parser.config import Config
 from logger.web_logger import log
 from security.hashing import calculate_hash
+from auth.authentication import register_client, acquire_token
 
 config = Config('cfg/client_config.ini')
 WS_SERVER_URL = config.get('Server', 'SERVER_URL')
@@ -28,12 +29,11 @@ def load_client_data():
 
 
 def authenticate(username, password):
-    from auth.authentication import register_client, acquire_token
     client_data = load_client_data()
     if client_data:
         return client_data['client_id'], client_data['token']
-    client_id = register_client()
-    token = acquire_token()
+    client_id = register_client(username, password)
+    token = acquire_token(username, password)
     save_client_data(client_id, token)
     return client_id, token
 
@@ -134,4 +134,3 @@ if __name__ == "__main__":
         create_job(args.payload, args.data_file_path)
     else:
         parser.error('No action specified')
-        
