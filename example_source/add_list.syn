@@ -4,7 +4,7 @@
 <<input>>
 .type=file
 .sep=\n
-.name=input_data
+.name=data
 <<endinput>>
 <<output>>
 .type=file
@@ -16,6 +16,6 @@
 .import lang.io.r_list
 <<enddef>>
 <<main>>
-.return math_col.sum_list(r_list.get_int_sep_n(input_data))
+.return sum_list(input_data)
 <<endmain>>
 <<<end>>>

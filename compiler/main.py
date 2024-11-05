@@ -1,5 +1,6 @@
 import re
 
+from build import generated_code
 from lang.core import main_block, indent
 
 
@@ -55,6 +56,8 @@ def parse_data(data):
     print(data)
     print('------------- data -------------')
 
+    return [int(x) for x in data.strip().split('\n')]
+
 
 def generate_out_code(code, data):
     print("generating code...")
@@ -66,26 +69,57 @@ def generate_out_code(code, data):
 
     # add the actual imports on top
     for im_lib in imports:
-        outcode = outcode + 'import ' + get_lib_code(im_lib) + "\n"
+        # outcode = outcode + 'import ' + get_lib_code(im_lib) + "\n"
+        # TODO: remove hardcoding
+        if im_lib == 'lang.lib.math_col':
+            math_txt = """def sum_list(l):
+    return sum(l)
+
+
+def multiply_list(l):
+    result = 1
+    for x in l:
+        result *= x
+    return result
+
+
+def mean_list(l):
+    return sum(l) / len(l)
+    
+"""
+            outcode = outcode + math_txt
+        if im_lib == 'lang.io.r_list':
+            # add data block
+            data_list = parse_data(data)
+            data_block = "\ninput_data = " + str(data_list)
+            outcode = outcode + data_block
 
     outcode = outcode + "\n\n"
     outcode = outcode + main_block
-
-    # TODO add data block
-
-    data_list = parse_data(data)
 
     # do operations
     for operation in operations:
         # remove the starting dot
         operation = operation[1:]
-        outcode = outcode + indent + operation
+        outcode = outcode + indent + indent + operation
 
     # print the final code
     print("-------- outcode ---------")
     print(outcode)
     print("-------- outcode ---------")
-    return outcode
+
+    # TODO execute the code and return the result
+    with open('build/generated_code.py', 'w') as f:
+        f.write(outcode)
+
+    return execute_generated_code()
+
+
+def execute_generated_code():
+    # Execute the main method and get the result
+    result = generated_code.main()
+    print("Result from generated code:", result)
+    return result
 
 
 def run_job(code, data):

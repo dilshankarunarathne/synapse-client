@@ -1,4 +1,4 @@
-main_block = """def main(input_data):\n"""
+main_block = """\ndef main():\n"""
 
 indent = "  "
 
