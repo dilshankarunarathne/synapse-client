@@ -1,3 +1,5 @@
-main_block = """if __name__ == '__main__':\n"""
+main_block = """def main(input_data):\n"""
 
 indent = "  "
+
+data_block = """"""

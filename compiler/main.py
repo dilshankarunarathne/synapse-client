@@ -60,10 +60,13 @@ def generate_out_code(code):
 
     # add the actual imports on top
     for im_lib in imports:
-        outcode = outcode + 'import ' + get_lib_code(im_lib)
+        outcode = outcode + 'import ' + get_lib_code(im_lib) + "\n"
 
     outcode = outcode + "\n\n"
     outcode = outcode + main_block
+
+    # TODO add data block
+
 
     # do operations
     for operation in operations:
