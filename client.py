@@ -75,7 +75,7 @@ def create_job(payload_path, data_file_path):
 
     def c_on_open(ws):
         log("Connection established")
-        log(f"Sending job data: {job_data}")
+        # log(f"Sending job data: {job_data}")
         ws.send(json.dumps(job_data))
 
     websocket.enableTrace(True)
