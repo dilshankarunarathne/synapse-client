@@ -27,11 +27,17 @@ def log(message):
         message = "[Client-ID: Unregistered] " + message
 
     print(message)
-    message = "[Client-Core] " + message
+    message = "[Client-Core] " + message.strip()
     try:
         response = requests.post(LOG_SERVER_URL, json={'message': message},
                                  headers={'Content-Type': 'application/json'})
         response.raise_for_status()
-        print('Log message sent:', response.json())
+        if response.content:
+            print('Log message sent:', response.json())
+        else:
+            print('Log message sent: No content in response')
     except requests.exceptions.RequestException as error:
-        print('Error sending log message:', error)
+        # print('Error sending log message:', error)
+        pass
+    except json.JSONDecodeError as error:
+        print('Error decoding log server response:', error)
