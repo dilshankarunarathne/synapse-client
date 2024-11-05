@@ -15,6 +15,6 @@
 .import lang.lib.math_col
 <<enddef>>
 <<main>>
-.output_data=sum_list(input_data)
+.return sum_list(input_data)
 <<endmain>>
 <<<end>>>
