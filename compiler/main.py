@@ -47,36 +47,5 @@ def parse_synapse_code(file_path):
     }
 
 
-def generate_python_code(parsed_code):
-    input_name = parsed_code['input']['name']
-    output_name = parsed_code['output']['name']
-    operations = parsed_code['operations']
-
-    # Generate Python code
-    python_code = f"""
-import os
-from lang.io.f_raw import read_input_data
-from lang.lib.math_col import sum_list
-
-def main():
-    input_data = read_input_data('{input_name}')
-    {operations[0]}
-    with open('{output_name}', 'w') as f:
-        f.write(str(output_data))
-
-if __name__ == "__main__":
-    main()
-"""
-    return python_code
-
-
 def compile_synapse_code(synapse_file_path, output_python_file_path):
     parsed_code = parse_synapse_code(synapse_file_path)
-    python_code = generate_python_code(parsed_code)
-
-    with open(output_python_file_path, 'w') as file:
-        file.write(python_code)
-
-
-# Example usage
-# compile_synapse_code('example_source/add_list.syn', 'compiled_code.py')
