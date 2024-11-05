@@ -38,14 +38,14 @@ def authenticate(username, password):
     return client_id, token
 
 
-def create_job(payload_path, data_file_path, mode):
+def create_job(payload_path, data_file_path):
     with open(payload_path, 'rb') as f:
         payload = f.read()
     with open(data_file_path, 'rb') as f:
         data = f.read()
     payload_hash = calculate_hash(payload)
     data_hash = calculate_hash(data)
-    log(f"Job created with mode: {mode}, payload hash: {payload_hash}, data hash: {data_hash}")
+    log(f"Job created with payload hash: {payload_hash}, data hash: {data_hash}")
     # TODO Submit job to the distribution server (implementation needed)
 
 
@@ -82,34 +82,7 @@ def process_job(job_id):
     return result, payload_hash, data_hash
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Synapse Client')
-    parser.add_argument('-auth', action='store_true', help='Authenticate the client with the server')
-    parser.add_argument('-register', action='store_true', help='Register the client with the server')
-    parser.add_argument('-create', action='store_true', help='Create a new job')
-    parser.add_argument('-u', '--username', type=str, required=True, help='Username for authentication')
-    parser.add_argument('-p', '--password', type=str, required=True, help='Password for authentication')
-    parser.add_argument('-bin', '--payload_path', type=str, help='Path for the payload file')
-    parser.add_argument('-data', '--data_file_path', type=str, help='Path for the data file')
-    parser.add_argument('-mode', type=str, choices=['s', 'd', 'c'], help='Job type: s-single, d-distributive, '
-                                                                         'c-collaborative')
-
-    args = parser.parse_args()
-
-    if args.auth:
-        client_id, token = authenticate(args.username, args.password)
-        log(f"Authenticated with client_id: {client_id} and token: {token}")
-    elif args.register:
-        from auth.authentication import register_client
-        client_id = register_client(args.username, args.password) # TODO: Fix this
-        log(f"Registered with client_id: {client_id}")
-    elif args.create:
-        if not args.payload_path or not args.data_file_path or not args.mode:
-            parser.error('-create requires -bin, -data, and -mode')
-        create_job(args.payload_path, args.data_file_path, args.mode)
-    else:
-        parser.error('No action specified')
-
+def start_service():
     websocket.enableTrace(True)
     ws = websocket.WebSocketApp(WS_SERVER_URL,
                                 on_open=on_open,
@@ -127,3 +100,38 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         ws.close()
         log("Client terminated")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Synapse Client')
+    parser.add_argument('-auth', action='store_true', help='Authenticate the client with the server')
+    parser.add_argument('-register', action='store_true', help='Register the client with the server')
+    parser.add_argument('-start-service', action='store_true', help='Start the websocket service')
+    parser.add_argument('-create-job', action='store_true', help='Create a new job')
+    parser.add_argument('-u', '--username', type=str, help='Username for authentication')
+    parser.add_argument('-p', '--password', type=str, help='Password for authentication')
+    parser.add_argument('-payload', type=str, help='Path for the payload file')
+    parser.add_argument('-data', '--data_file_path', type=str, help='Path for the data file')
+
+    args = parser.parse_args()
+
+    if args.auth:
+        if not args.username or not args.password:
+            parser.error('-auth requires -u/--username and -p/--password')
+        client_id, token = authenticate(args.username, args.password)
+        log(f"Authenticated with client_id: {client_id} and token: {token}")
+    elif args.register:
+        if not args.username or not args.password:
+            parser.error('-register requires -u/--username and -p/--password')
+        from auth.authentication import register_client
+        client_id = register_client(args.username, args.password)
+        log(f"Registered with client_id: {client_id}")
+    elif args.start_service:
+        start_service()
+    elif args.create_job:
+        if not args.payload or not args.data_file_path:
+            parser.error('-create-job requires -payload and -data')
+        create_job(args.payload, args.data_file_path)
+    else:
+        parser.error('No action specified')
+        
