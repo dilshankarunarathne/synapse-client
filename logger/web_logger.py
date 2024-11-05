@@ -2,7 +2,9 @@ import requests
 import json
 import os
 
-from client import config
+from config_parser.config import Config
+
+config = Config('cfg/client_config.ini')
 
 LOG_SERVER_URL = config.get('Logging', 'LOG_SERVER_URL')
 
