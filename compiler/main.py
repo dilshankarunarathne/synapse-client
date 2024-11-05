@@ -50,7 +50,13 @@ def get_lib_code(im_lib):
     return im_lib
 
 
-def generate_out_code(code):
+def parse_data(data):
+    print('------------- data -------------')
+    print(data)
+    print('------------- data -------------')
+
+
+def generate_out_code(code, data):
     print("generating code...")
 
     operations = code['operations']
@@ -67,6 +73,7 @@ def generate_out_code(code):
 
     # TODO add data block
 
+    data_list = parse_data(data)
 
     # do operations
     for operation in operations:
@@ -85,7 +92,7 @@ def run_job(code, data):
     try:
         parsed_code = parse_synapse_code(code)
         print("code parsed...")
-        return generate_out_code(parsed_code)
+        return generate_out_code(parsed_code, data)
     except Exception as e:
         print("----Parsing SYN Failed----" + e)
     return None
