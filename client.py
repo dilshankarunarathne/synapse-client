@@ -4,6 +4,7 @@ import os
 import threading
 import time
 import websocket
+import base64
 
 from config_parser.config import Config
 from logger.web_logger import log
@@ -39,14 +40,61 @@ def authenticate(username, password):
 
 
 def create_job(payload_path, data_file_path):
-    with open(payload_path, 'rb') as f:
-        payload = f.read()
-    with open(data_file_path, 'rb') as f:
-        data = f.read()
-    payload_hash = calculate_hash(payload)
-    data_hash = calculate_hash(data)
-    log(f"Job created with payload hash: {payload_hash}, data hash: {data_hash}")
-    # TODO Submit job to the distribution server (implementation needed)
+    from logger.web_logger import log
+
+    with open(payload_path, 'rb') as payload_file, open(data_file_path, 'rb') as data_file:
+        payload = payload_file.read()
+        data = data_file.read()
+
+    payload_encoded = base64.b64encode(payload).decode('utf-8')
+    data_encoded = base64.b64encode(data).decode('utf-8')
+
+    job_data = {
+        'type': 'create_job',
+        'payload': payload_encoded,
+        'data': data_encoded
+    }
+
+    def c_on_message(ws, message):
+        log(f"Received message: {message}")
+        try:
+            response = json.loads(message)
+            if response.get("type") == "job_created":
+                job_id = response.get("job_id")
+                log(f"Job created successfully with job_id: {job_id}")
+            else:
+                log(f"Unexpected message type: {response.get('type')}")
+        except json.JSONDecodeError as e:
+            log(f"Error decoding message: {e}")
+
+    def c_on_error(ws, error):
+        log(f"Error: {error}")
+
+    def c_on_close(ws, close_status_code, close_msg):
+        log(f"Connection closed: {close_status_code} {close_msg}")
+
+    def c_on_open(ws):
+        log("Connection established")
+        log(f"Sending job data: {job_data}")
+        ws.send(json.dumps(job_data))
+
+    websocket.enableTrace(True)
+    ws = websocket.WebSocketApp(WS_SERVER_URL,
+                                on_open=c_on_open,
+                                on_message=c_on_message,
+                                on_error=c_on_error,
+                                on_close=c_on_close)
+
+    wst = threading.Thread(target=ws.run_forever)
+    wst.daemon = True
+    wst.start()
+
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        ws.close()
+        log("Client terminated")
 
 
 def on_message(ws, message):
@@ -133,4 +181,6 @@ if __name__ == "__main__":
             parser.error('-create-job requires -payload and -data')
         create_job(args.payload, args.data_file_path)
     else:
-        parser.error('No action specified')
+        print("no arguments specified for the synapse client")
+        print("starting client daemon...")
+        start_service()
