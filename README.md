@@ -31,3 +31,9 @@
 - **Error Handling**: Implement proper error handling and logging mechanisms to diagnose and resolve issues.
 - **Resource Management**: Manage resource allocation efficiently to prevent overloading devices.
 - **User Experience**: Provide a user-friendly interface for submitting jobs and monitoring their progress.
+
+# Usage 
+
+```bash
+$ python client.py 
+```
