@@ -1,10 +1,9 @@
 import re
 
+from lang.core import main_block, indent
 
-def parse_synapse_code(file_path):
-    with open(file_path, 'r') as file:
-        code = file.read()
 
+def parse_synapse_code(code):
     # Extract sections
     meta_section = re.search(r'<<meta>>(.*?)<<endmeta>>', code, re.DOTALL).group(1)
     def_section = re.search(r'<<def>>(.*?)<<enddef>>', code, re.DOTALL).group(1)
@@ -28,6 +27,8 @@ def parse_synapse_code(file_path):
     # Parse main operations
     main_operations = main_section.strip().split('\n')
 
+    print('parsing complete...')
+
     return {
         'n_clients': n_clients,
         'input': {
@@ -44,5 +45,42 @@ def parse_synapse_code(file_path):
     }
 
 
-def compile_synapse_code(synapse_file_path, output_python_file_path):
-    parsed_code = parse_synapse_code(synapse_file_path)
+def get_lib_code(im_lib):
+    print("reading from library...")
+    return im_lib
+
+
+def generate_out_code(code):
+    print("generating code...")
+
+    operations = code['operations']
+    imports = code['imports']
+    
+    outcode = """# GENERATED CODE BY SYNAPSE LANGUAGE TOOLCHAIN\n\n"""
+
+    # add the actual imports on top
+    for im_lib in imports:
+        outcode = outcode + 'import ' + get_lib_code(im_lib)
+
+    outcode = outcode + "\n\n"
+    outcode = outcode + main_block
+
+    # do operations
+    for operation in operations:
+        outcode = outcode + indent + operation
+
+    # print the final code
+    print("-------- outcode ---------")
+    print(outcode)
+    print("-------- outcode ---------")
+    return outcode
+
+
+def run_job(code, data):
+    try:
+        parsed_code = parse_synapse_code(code)
+        print("code parsed...")
+        return generate_out_code(parsed_code)
+    except Exception as e:
+        print("----Parsing SYN Failed----" + e)
+    return None
