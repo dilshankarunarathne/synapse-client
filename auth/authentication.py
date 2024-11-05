@@ -1,5 +1,6 @@
 import requests
 from config_parser.config import Config
+from logger.web_logger import log
 
 config = Config('cfg/client_config.ini')
 
@@ -8,12 +9,11 @@ USERNAME = config.get('Credentials', 'USERNAME')
 PASSWORD = config.get('Credentials', 'PASSWORD')
 
 
-def register_client():
-    from logger.web_logger import log
+def register_client(_username, _password):
     url = f"{AUTHZ_SERVER_URL}/register"
     data = {
-        "username": USERNAME,
-        "password": PASSWORD
+        "username": _username,
+        "password": _password
     }
     try:
         response = requests.post(url, json=data)
