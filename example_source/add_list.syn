@@ -1,0 +1,20 @@
+<<<start>>>
+<<meta>>
+.n_clients=5
+<<input>>
+.type=file
+.sep=\n
+.name=input_data
+<<endinput>>
+<<output>>
+.type=file
+.name=output_data
+<<endoutput>>
+<<endmeta>>
+<<def>>
+.import lang.lib.math_col
+<<enddef>>
+<<main>>
+.output_data=sum_list(input_data)
+<<endmain>>
+<<<end>>>
