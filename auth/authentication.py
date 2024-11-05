@@ -23,7 +23,7 @@ def register_client():
         return client_id
     except requests.exceptions.RequestException as error:
         log(f"Error registering client: {error}")
-        raise
+        raise error
 
 
 def acquire_token():
@@ -41,4 +41,5 @@ def acquire_token():
         return token
     except requests.exceptions.RequestException as error:
         log(f"Error acquiring token: {error}")
-        raise
+        raise error
+        
