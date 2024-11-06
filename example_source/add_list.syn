@@ -1,6 +1,6 @@
 <<<start>>>
 <<meta>>
-.n_clients=5
+.n_clients=3
 <<input>>
 .type=file
 .sep=\n

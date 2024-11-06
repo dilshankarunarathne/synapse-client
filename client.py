@@ -117,6 +117,19 @@ def on_message(ws, message):
         result = _process_job(job_id, data, payload)
         # TODO hash result, payload and data
         ws.send(f"RESULT:{job_id}:{result}")
+
+    elif message.startswith("LEAD"):
+        parts = message.split("|SEP|")
+        job_data = {}
+        for part in parts:
+            if ":" in part:
+                key, value = part.split(":", 1)
+                job_data[key.strip()] = value.strip()
+        data = job_data.get("DATA")
+        payload = job_data.get("PAYLOAD")
+        result = _process_job(data, payload)
+        ws.send(f"FINAL_RESULT:{result}")
+
     else:
         log(f"Received non-job message: {message}")
 
