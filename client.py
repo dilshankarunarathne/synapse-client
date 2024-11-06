@@ -125,10 +125,12 @@ def on_message(ws, message):
             if ":" in part:
                 key, value = part.split(":", 1)
                 job_data[key.strip()] = value.strip()
+
         data = job_data.get("DATA")
         payload = job_data.get("PAYLOAD")
-        result = _process_job(data, payload)
-        ws.send(f"FINAL_RESULT:{result}")
+        log(f"Processing lead job with data: {data} and payload: {payload}")
+        result = _process_job("lead", data, payload)
+        ws.send(f"FINAL:{result}")
 
     else:
         log(f"Received non-job message: {message}")
@@ -197,6 +199,7 @@ if __name__ == "__main__":
         if not args.username or not args.password:
             parser.error('-register requires -u/--username and -p/--password')
         from auth.authentication import register_client
+
         client_id = register_client(args.username, args.password)
         log(f"Registered with client_id: {client_id}")
     elif args.start_service:

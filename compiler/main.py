@@ -72,19 +72,9 @@ def generate_out_code(code, data):
         # outcode = outcode + 'import ' + get_lib_code(im_lib) + "\n"
         # TODO: remove hardcoding
         if im_lib == 'lang.lib.math_col':
-            math_txt = """def sum_list(l):
-    return sum(l)
+            math_txt = """def sum_list(input_d):
+    return sum(input_d)
 
-
-def multiply_list(l):
-    result = 1
-    for x in l:
-        result *= x
-    return result
-
-
-def mean_list(l):
-    return sum(l) / len(l)
     
 """
             outcode = outcode + math_txt
