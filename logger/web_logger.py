@@ -33,11 +33,13 @@ def log(message):
                                  headers={'Content-Type': 'application/json'})
         response.raise_for_status()
         if response.content:
-            print('Log message sent:', response.json())
+            try:
+                print('Log message sent:', response.json())
+            except json.JSONDecodeError as error:
+                print('Error decoding log server response:', error)
         else:
             print('Log message sent: No content in response')
     except requests.exceptions.RequestException as error:
-        # print('Error sending log message:', error)
-        pass
+        print('Error sending log message:', error)
     except json.JSONDecodeError as error:
         print('Error decoding log server response:', error)

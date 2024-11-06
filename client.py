@@ -132,6 +132,14 @@ def on_message(ws, message):
         result = _process_job("lead", data, payload)
         ws.send(f"FINAL:{result}")
 
+    elif message.startswith("OUTPUT"):
+        log(f"Final result has received to the client: {message}")
+        print(f"Final result has received to the client: {message}")
+        print("--------------------------------------------")
+        print("Final result: ", message)
+        print("--------------------------------------------")
+        exit(0)
+
     else:
         log(f"Received non-job message: {message}")
 
