@@ -2,6 +2,7 @@ import re
 
 from build import generated_code
 from lang.core import main_block, indent
+import importlib
 
 
 def parse_synapse_code(code):
@@ -64,7 +65,7 @@ def generate_out_code(code, data):
 
     operations = code['operations']
     imports = code['imports']
-    
+
     outcode = """# GENERATED CODE BY SYNAPSE LANGUAGE TOOLCHAIN\n\n"""
 
     # add the actual imports on top
@@ -106,6 +107,9 @@ def generate_out_code(code, data):
 
 
 def execute_generated_code():
+    # Reload the generated_code module
+    importlib.reload(generated_code)
+
     # Execute the main method and get the result
     result = generated_code.main()
     print("Result from generated code:", result)
