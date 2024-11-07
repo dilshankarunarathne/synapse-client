@@ -53,9 +53,9 @@ def get_lib_code(im_lib):
 
 
 def parse_data(data):
-    print('------------- data -------------')
-    print(data)
-    print('------------- data -------------')
+    # print('------------- data -------------')
+    # print(data)
+    # print('------------- data -------------')
 
     return [int(x) for x in data.strip().split('\n')]
 
@@ -95,9 +95,9 @@ def generate_out_code(code, data):
         outcode = outcode + indent + indent + operation
 
     # print the final code
-    print("-------- outcode ---------")
-    print(outcode)
-    print("-------- outcode ---------")
+    # print("-------- outcode ---------")
+    # print(outcode)
+    # print("-------- outcode ---------")
 
     # TODO execute the code and return the result
     with open('build/generated_code.py', 'w') as f:
